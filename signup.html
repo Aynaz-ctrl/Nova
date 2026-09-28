@@ -3,63 +3,57 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="شروع مسیر یادگیری در AyNova AI" />
-    <title>شروع مسیر | AyNova AI</title>
+    <title>اطلاعات اولیه | AyNova AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="signup.css" />
   </head>
-  <body class="signup-page">
-    <header class="signup-header">
-      <a class="brand-logo" href="index.html" aria-label="Aynova AI">
-        <span class="logo-spark" aria-hidden="true">✦</span>
-        <span class="logo-word">Aynova</span>
-        <span class="logo-ai">AI</span>
+  <body>
+    <header class="topbar">
+      <a class="wordmark" href="index.html" aria-label="Aynova AI">
+        <span class="wordmark-spark">✦</span><span>Aynova</span><em>AI</em>
       </a>
-      <a class="home-link" href="index.html">خانه</a>
+      <a class="home" href="index.html" aria-label="خانه">⌂</a>
     </header>
 
-    <main class="signup-main">
-      <section class="signup-card" aria-labelledby="signup-title">
-        <div class="form-progress">
-          <span>شروع مسیر</span>
+    <main>
+      <section class="form-card" aria-labelledby="page-title">
+        <div class="form-title-row">
+          <div>
+            <p>شروع مسیر</p>
+            <h1 id="page-title">اطلاعات اولیه</h1>
+          </div>
           <span>مرحله ۱ از ۲</span>
         </div>
-        <h1 id="signup-title">اطلاعات اولیه</h1>
+
         <form>
           <label for="first-name">نام</label>
-          <input id="first-name" name="first-name" type="text" autocomplete="given-name" required />
+          <input id="first-name" name="first-name" type="text" required />
 
           <label for="last-name">نام خانوادگی</label>
-          <input id="last-name" name="last-name" type="text" autocomplete="family-name" required />
+          <input id="last-name" name="last-name" type="text" required />
 
-          <label for="phone">شماره تماس والد</label>
-          <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="۰۹۱۲۱۲۳۴۵۶۷" required />
+          <label for="parent-phone">شماره تماس والد</label>
+          <input id="parent-phone" name="parent-phone" type="tel" inputmode="numeric" placeholder="۰۹۱۲۱۲۳۴۵۶۷" required />
 
           <label for="age">سن</label>
           <select id="age" name="age" required>
             <option value="" selected disabled>انتخاب کن</option>
-            <option value="8">۸ سال</option>
-            <option value="9">۹ سال</option>
-            <option value="10">۱۰ سال</option>
-            <option value="11">۱۱ سال</option>
-            <option value="12">۱۲ سال</option>
-            <option value="13">۱۳ سال</option>
-            <option value="14">۱۴ سال</option>
-            <option value="15">۱۵ سال</option>
-            <option value="16">۱۶ سال</option>
+            <option value="8">۸ سال</option><option value="9">۹ سال</option><option value="10">۱۰ سال</option>
+            <option value="11">۱۱ سال</option><option value="12">۱۲ سال</option><option value="13">۱۳ سال</option>
+            <option value="14">۱۴ سال</option><option value="15">۱۵ سال</option><option value="16">۱۶ سال</option>
           </select>
 
           <fieldset>
             <legend>جنسیت</legend>
-            <div class="gender-options">
-              <label class="gender-option" for="girl"><input id="girl" name="gender" type="radio" value="girl" required /><span>دختر</span></label>
-              <label class="gender-option" for="boy"><input id="boy" name="gender" type="radio" value="boy" /><span>پسر</span></label>
+            <div class="gender-grid">
+              <label class="choice"><span>دختر</span><input name="gender" type="radio" value="girl" required /></label>
+              <label class="choice"><span>پسر</span><input name="gender" type="radio" value="boy" /></label>
             </div>
           </fieldset>
 
-          <button class="continue-button" type="submit">ادامه</button>
+          <button type="submit">ادامه</button>
         </form>
       </section>
     </main>
