@@ -17,10 +17,13 @@ document.querySelectorAll('.chapter-head').forEach((head) => {
   const chapter = head.closest('.chapter');
   const list = document.getElementById(head.getAttribute('aria-controls'));
   const sync = () => {
-    const isOpen = chapter.classList.toggle('open');
+    const isOpen = chapter.classList.contains('open');
     list.classList.toggle('is-hidden', !isOpen);
     head.setAttribute('aria-expanded', String(isOpen));
   };
-  head.addEventListener('click', sync);
+  head.addEventListener('click', () => {
+    chapter.classList.toggle('open');
+    sync();
+  });
   sync();
 });
