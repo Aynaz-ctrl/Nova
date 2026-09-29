@@ -17,6 +17,7 @@ continueButton.addEventListener('click', () => {
   progress = Math.min(progress + 20, 100);
   localStorage.setItem('aynovaProgress', progress);
   renderProgress();
+  window.location.href = continueButton.dataset.href;
 });
 
 renderProgress();
