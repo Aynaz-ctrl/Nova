@@ -3,37 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>درس اول | AyNova AI</title>
+    <title>هوش مصنوعی چیست؟ | AyNova AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="lesson.css?v=1" />
+    <link rel="stylesheet" href="lesson.css?v=2" />
+    <script src="lesson.js" defer></script>
   </head>
   <body>
     <header class="lesson-header">
-      <div><p>فصل ۱: آشنایی با دنیای هوش مصنوعی</p><h1>هوش مصنوعی چیست؟</h1></div>
-      <span>درس ۱ از ۴</span>
+      <a class="back" href="courses.html?v=1">← بازگشت به دوره‌ها</a>
+      <p>فصل ۱: آشنایی با دنیای هوش مصنوعی</p>
+      <h1>هوش مصنوعی چیست؟</h1>
     </header>
 
     <main>
-      <p class="lesson-text">
-        هوش مصنوعی یعنی به کامپیوتر یاد بدهیم چیزهایی را انجام دهد که قبلاً فقط انسان می‌توانست؛ مثل دیدن، تشخیص دادن و انتخاب کردن.
-      </p>
-      <p class="lesson-text">
-        در این فصل یاد می‌گیری هوش مصنوعی چطور کار می‌کند، در زندگی روزمره کجاست و چطور می‌توانی از آن برای ساختن استفاده کنی.
-      </p>
+      <p class="lesson-intro">با یک تعریف ساده و چند مثال روزمره، با هوش مصنوعی آشنا می‌شوی.</p>
 
-      <section class="tutor" aria-label="معلم هوش مصنوعی">
-        <p class="tutor-label">معلم هوش مصنوعی</p>
-        <p class="tutor-message">سلام! من کمکت می‌کنم این درس را قدم‌به‌قدم یاد بگیری. سؤال داری از من بپرس.</p>
-        <div class="tutor-input"><input type="text" placeholder="سؤالت را بنویس…" aria-label="سؤال از معلم هوش مصنوعی" /><button type="button">بپرس</button></div>
+      <div class="video-placeholder">
+        <span class="play-icon" aria-hidden="true"></span>
+        <p>ویدئوی آموزشی این درس بعداً اضافه می‌شود</p>
+      </div>
+
+      <section class="lesson-points" aria-labelledby="points-title">
+        <h2 id="points-title">نکته‌های اصلی درس</h2>
+        <ul>
+          <li>هدف درس را با زبان ساده بیان کن.</li>
+          <li>پاسخ AI را همیشه با فکر خودت بررسی کن.</li>
+        </ul>
+        <div class="lesson-actions">
+          <button class="mark-done" id="mark-done" type="button">علامت‌گذاری به‌عنوان تکمیل‌شده</button>
+          <a class="next-part" href="courses.html?v=1">قسمت بعدی</a>
+        </div>
       </section>
     </main>
-
-    <nav class="lesson-nav" aria-label="حرکت بین درس‌ها">
-      <button type="button" id="complete-lesson">درس را انجام دادم</button>
-      <a href="dashboard.html">بازگشت به خانه</a>
-    </nav>
-    <script src="lesson.js" defer></script>
   </body>
 </html>

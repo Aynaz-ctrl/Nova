@@ -1,7 +1,14 @@
-const completeLesson = document.querySelector('#complete-lesson');
+const markDone = document.querySelector('#mark-done');
 
-completeLesson.addEventListener('click', () => {
-  const progress = Number(localStorage.getItem('aynovaProgress') || 0);
-  localStorage.setItem('aynovaProgress', Math.min(progress + 20, 100));
-  window.location.href = 'dashboard.html';
+function lessonState() {
+  const saved = JSON.parse(localStorage.getItem('aynovaLessons') || '{}');
+  saved['1-1'] = true;
+  localStorage.setItem('aynovaLessons', JSON.stringify(saved));
+}
+
+markDone.addEventListener('click', () => {
+  lessonState();
+  markDone.textContent = 'انجام شد ✓';
+  markDone.classList.add('done');
+  window.location.href = 'courses.html?v=2';
 });
