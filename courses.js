@@ -1,19 +1,25 @@
 const savedLessons = JSON.parse(localStorage.getItem('aynovaLessons') || '{}');
-const totalLessons = document.querySelectorAll('.lesson-row').length;
-const doneLessons = document.querySelectorAll('.lesson-row').length
-  ? [...document.querySelectorAll('.check')].filter((mark) => savedLessons[mark.dataset.lesson]).length
-  : 0;
+const checkMarks = [...document.querySelectorAll('.check')];
 
-document.querySelectorAll('.check').forEach((mark) => {
-  mark.classList.toggle('done', Boolean(savedLessons[mark.dataset.lesson]));
-  mark.textContent = savedLessons[mark.dataset.lesson] ? '✓' : '';
+checkMarks.forEach((mark) => {
+  const isDone = Boolean(savedLessons[mark.dataset.lesson]);
+  mark.classList.toggle('done', isDone);
+  mark.textContent = isDone ? '✓' : '';
 });
 
 const lessonCount = document.querySelector('#lesson-count');
-lessonCount.textContent = `${doneLessons.toLocaleString('fa-IR')} از ${totalLessons.toLocaleString('fa-IR')} درس تکمیل شده`;
+const doneCount = checkMarks.filter((mark) => savedLessons[mark.dataset.lesson]).length;
+if (lessonCount && checkMarks.length) {
+  lessonCount.textContent = `${doneCount.toLocaleString('fa-IR')} از ${checkMarks.length.toLocaleString('fa-IR')} درس تکمیل شده`;
+}
 
-document.querySelector('.chapter-head').addEventListener('click', (event) => {
-  const chapter = event.currentTarget.closest('.chapter');
-  const isOpen = chapter.classList.toggle('open');
-  event.currentTarget.setAttribute('aria-expanded', String(isOpen));
+document.querySelectorAll('.chapter-head').forEach((head) => {
+  const chapter = head.closest('.chapter');
+  const list = document.getElementById(head.getAttribute('aria-controls'));
+  const sync = () => {
+    const isOpen = chapter.classList.toggle('open', list.hidden);
+    list.hidden = !isOpen;
+    head.setAttribute('aria-expanded', String(isOpen));
+  };
+  head.addEventListener('click', sync);
 });
