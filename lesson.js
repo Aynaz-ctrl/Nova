@@ -1,14 +1,15 @@
+const lessonId = new URLSearchParams(window.location.search).get('lesson') || '1-1';
 const markDone = document.querySelector('#mark-done');
 
-function lessonState() {
-  const saved = JSON.parse(localStorage.getItem('aynovaLessons') || '{}');
-  saved['1-1'] = true;
-  localStorage.setItem('aynovaLessons', JSON.stringify(saved));
+const saved = JSON.parse(localStorage.getItem('aynovaLessons') || '{}');
+if (saved[lessonId]) {
+  markDone.textContent = 'انجام شد ✓';
+  markDone.classList.add('done');
 }
 
 markDone.addEventListener('click', () => {
-  lessonState();
-  markDone.textContent = 'انجام شد ✓';
-  markDone.classList.add('done');
-  window.location.href = 'courses.html?v=2';
+  const current = JSON.parse(localStorage.getItem('aynovaLessons') || '{}');
+  current[lessonId] = true;
+  localStorage.setItem('aynovaLessons', JSON.stringify(current));
+  window.location.href = 'courses.html?v=3';
 });
