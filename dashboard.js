@@ -13,11 +13,12 @@ function renderProgress() {
   progressFill.style.width = `${progress}%`;
 }
 
-continueButton.addEventListener('click', () => {
+function openNextLesson() {
   progress = Math.min(progress + 20, 100);
   localStorage.setItem('aynovaProgress', progress);
   renderProgress();
-  window.location.href = continueButton.dataset.href;
-});
+}
+
+continueButton.addEventListener('click', openNextLesson);
 
 renderProgress();
