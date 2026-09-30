@@ -7,8 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="progress.css?v=1" />
-    <script src="progress.js?v=1" defer></script>
+    <link rel="stylesheet" href="progress.css?v=2" />
+    <script src="progress.js?v=2" defer></script>
   </head>
   <body>
     <aside class="sidebar">
@@ -25,6 +25,10 @@
         <article class="summary-card"><span>امتیاز <b id="score-name">تو</b></span><strong id="total-score">۰</strong><small>امتیاز شخصی تو</small></article>
       </section>
       <section class="learning-card" aria-labelledby="learning-title"><h2 id="learning-title">روند یادگیری</h2><div id="chapter-progress"></div></section>
+      <section class="insights-grid" aria-label="بازخورد یادگیری">
+        <article class="insight-card strength"><h2>نقاط قوت</h2><p id="strength-text"></p></article>
+        <article class="insight-card practice"><h2>نیاز به تمرین بیشتر</h2><p id="practice-text"></p></article>
+      </section>
     </main>
   </body>
 </html>
