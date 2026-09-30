@@ -7,8 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="courses.css?v=7" />
-    <script src="courses.js?v=4" defer></script>
+    <link rel="stylesheet" href="courses.css?v=8" />
+    <script src="courses.js?v=5" defer></script>
   </head>
   <body>
     <aside class="sidebar">
@@ -33,10 +33,27 @@
             <li><a class="lesson-row" href="lesson.html?v=4&lesson=1-4"><span>انسان و هوش مصنوعی</span><span class="lesson-start">شروع</span><span class="check" data-lesson="1-4" aria-hidden="true"></span></a></li>
           </ul>
         </article>
-        <article class="chapter locked"><span class="chapter-icon" aria-label="قفل‌شده">🔒</span><span class="chapter-copy"><strong>فصل ۲: آشنایی با ابزارهای هوش مصنوعی</strong><small>برای ادامه مسیر، دسترسی کامل را فعال کن.</small></span><span class="status">قفل‌شده</span></article>
-        <article class="chapter locked"><span class="chapter-icon" aria-label="قفل‌شده">🔒</span><span class="chapter-copy"><strong>فصل ۳: هنر Prompt نویسی</strong><small>برای ادامه مسیر، دسترسی کامل را فعال کن.</small></span><span class="status">قفل‌شده</span></article>
-        <article class="chapter locked"><span class="chapter-icon" aria-label="قفل‌شده">🔒</span><span class="chapter-copy"><strong>فصل ۴: ساختن با AI</strong><small>برای ادامه مسیر، دسترسی کامل را فعال کن.</small></span><span class="status">قفل‌شده</span></article>
+        <article class="chapter locked" data-chapter="2"><button class="locked-chapter" type="button"><span class="chapter-icon" aria-hidden="true">🔒</span><span class="chapter-copy"><strong>فصل ۲: آشنایی با ابزارهای هوش مصنوعی</strong><small>برای ادامه مسیر، دسترسی کامل را فعال کن.</small></span><span class="status">قفل‌شده</span></button></article>
+        <article class="chapter locked" data-chapter="3"><button class="locked-chapter" type="button"><span class="chapter-icon" aria-hidden="true">🔒</span><span class="chapter-copy"><strong>فصل ۳: هنر Prompt نویسی</strong><small>برای ادامه مسیر، دسترسی کامل را فعال کن.</small></span><span class="status">قفل‌شده</span></button></article>
+        <article class="chapter locked" data-chapter="4"><button class="locked-chapter" type="button"><span class="chapter-icon" aria-hidden="true">🔒</span><span class="chapter-copy"><strong>فصل ۴: ساختن با AI</strong><small>برای ادامه مسیر، دسترسی کامل را فعال کن.</small></span><span class="status">قفل‌شده</span></button></article>
       </section>
     </main>
+
+    <div class="payment-overlay" id="payment-modal" hidden>
+      <section class="payment-modal" role="dialog" aria-modal="true" aria-labelledby="payment-title">
+        <button class="payment-close" id="payment-close" type="button" aria-label="بستن">×</button>
+        <p class="payment-eyebrow">دسترسی کامل</p>
+        <h2 id="payment-title">فعال‌سازی دسترسی نوا</h2>
+        <div class="payment-plan"><strong>دسترسی به فصل‌های ۲ تا ۴</strong><span>مبلغ نمونه: ۴۹۰٬۰۰۰ ریال</span></div>
+        <p class="payment-note">این بخش در نسخهٔ نمایشی است و پرداخت واقعی انجام نمی‌شود.</p>
+        <form id="payment-form" novalidate>
+          <label for="card-number">شماره کارت</label>
+          <input id="card-number" inputmode="numeric" autocomplete="off" placeholder="۶۰۳۷-۹۹۹۹-۹۹۹۹-۹۹۹۹" maxlength="19" required />
+          <div class="payment-fields"><label>تاریخ انقضا<input id="card-expiry" inputmode="numeric" autocomplete="off" placeholder="۰۸/۰۶" maxlength="۵" required /></label><label>CVV2<input id="card-cvv" inputmode="numeric" autocomplete="off" placeholder="۱۲۳" maxlength="۴" required /></label></div>
+          <p class="payment-error" id="payment-error" role="alert" hidden>لطفاً اطلاعات کارت را کامل وارد کن.</p>
+          <button class="payment-submit" type="submit">پرداخت</button>
+        </form>
+      </section>
+    </div>
   </body>
 </html>
