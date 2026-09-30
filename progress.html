@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>پیشرفت | AyNova AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="progress.css?v=1" />
+    <script src="progress.js?v=1" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="dashboard.html"><span>✦</span> Aynova <em>AI</em></a>
+      <nav aria-label="منوی اصلی">
+        <a href="dashboard.html"><b>⌂</b>خانه</a><a href="courses.html?v=10"><b>▣</b>دوره‌ها</a><a href="challenges.html?v=1"><b>✎</b>چالش‌ها</a><a href="quizzes.html?v=1"><b>✓</b>آزمون‌ها</a><a class="active" href="progress.html?v=1"><b>⌁</b>پیشرفت</a><a href="#chat"><b>◌</b>چت‌بات</a>
+      </nav>
+    </aside>
+    <main class="progress-page">
+      <section class="progress-title"><p>نمای کلی مسیر</p><h1>روند پیشرفت</h1><span>رشد <b id="student-name">تو</b> با قدم‌های کوچک ساخته می‌شود.</span></section>
+      <section class="summary-grid" aria-label="خلاصه پیشرفت">
+        <article class="summary-card overall"><span>پیشرفت کلی</span><strong id="overall-progress">۰٪</strong><div class="progress-track"><i id="overall-fill"></i></div></article>
+        <article class="summary-card"><span>درس تکمیل‌شده</span><strong id="completed-lessons">۰</strong><small id="lesson-total">از ۱۳ درس</small></article>
+        <article class="summary-card"><span>امتیاز <b id="score-name">تو</b></span><strong id="total-score">۰</strong><small>امتیاز شخصی تو</small></article>
+      </section>
+      <section class="learning-card" aria-labelledby="learning-title"><h2 id="learning-title">روند یادگیری</h2><div id="chapter-progress"></div></section>
+    </main>
+  </body>
+</html>
