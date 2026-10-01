@@ -92,7 +92,7 @@ function unlockCourses() {
     lessons.forEach((lesson, index) => {
       const id = `${number}-${index + 1}`;
       const item = document.createElement('li');
-      item.innerHTML = `<a class="lesson-row" href="lesson.html?v=5&lesson=${id}"><span>${lesson}</span><span class="lesson-start">شروع</span><span class="check" data-lesson="${id}" aria-hidden="true"></span></a>`;
+      item.innerHTML = `<a class="lesson-row" href="lesson.html?v=7&lesson=${id}"><span>${lesson}</span><span class="lesson-start">شروع</span><span class="check" data-lesson="${id}" aria-hidden="true"></span></a>`;
       list.append(item);
     });
     chapter.append(head, list);

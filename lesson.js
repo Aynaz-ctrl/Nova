@@ -23,7 +23,7 @@ if (saved[lessonId]) {
 
 const nextId = lessonNumber < lessons[chapterId].length ? `${chapterId}-${lessonNumber + 1}` : null;
 if (nextId) {
-  nextPart.href = `lesson.html?v=6&lesson=${nextId}`;
+  nextPart.href = `lesson.html?v=7&lesson=${nextId}`;
 } else {
   nextPart.href = 'courses.html?v=10';
   nextPart.textContent = 'بازگشت به دوره‌ها';
