@@ -1,4 +1,5 @@
 const name = localStorage.getItem('aynovaFirstName') || 'دوست من';
+const learnerKey = 'aynovaLearnerId';
 document.querySelector('#student-name').textContent = name;
 const form = document.querySelector('#chat-form');
 const input = document.querySelector('#chat-input');
@@ -29,10 +30,11 @@ form.addEventListener('submit', async (event) => {
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, name })
+      body: JSON.stringify({ message: text, name, learnerId: localStorage.getItem(learnerKey) })
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'پاسخی دریافت نشد.');
+    localStorage.setItem(learnerKey, data.learnerId);
     pendingReply.textContent = data.reply;
   } catch (error) {
     pendingReply.textContent = error.message || 'ارتباط با نوا برقرار نشد. دوباره تلاش کن.';
