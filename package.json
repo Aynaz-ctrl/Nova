@@ -1,0 +1,13 @@
+{
+  "name": "aynova-ai-learning",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AyNova learning platform backend",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -3,19 +3,43 @@ document.querySelector('#student-name').textContent = name;
 const form = document.querySelector('#chat-form');
 const input = document.querySelector('#chat-input');
 const messages = document.querySelector('#chat-messages');
+const submitButton = form.querySelector('button');
 
-form.addEventListener('submit', (event) => {
+function appendMessage(text, type) {
+  const message = document.createElement('p');
+  message.className = `message ${type}`;
+  message.textContent = text;
+  messages.append(message);
+  message.scrollIntoView({ block: 'nearest' });
+  return message;
+}
+
+form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const text = input.value.trim();
   if (!text) return;
-  const userMessage = document.createElement('p');
-  userMessage.className = 'message user';
-  userMessage.textContent = text;
-  messages.append(userMessage);
+
+  appendMessage(text, 'user');
   input.value = '';
-  const reply = document.createElement('p');
-  reply.className = 'message assistant';
-  reply.textContent = 'این نسخهٔ نمایشی چت‌بات است. فردا پاسخ‌گویی واقعی و امنِ نوا را به آن وصل می‌کنیم.';
-  messages.append(reply);
-  reply.scrollIntoView({ block: 'nearest' });
+  input.disabled = true;
+  submitButton.disabled = true;
+  const pendingReply = appendMessage('نوا در حال فکرکردن است…', 'assistant pending');
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, name })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'پاسخی دریافت نشد.');
+    pendingReply.textContent = data.reply;
+  } catch (error) {
+    pendingReply.textContent = error.message || 'ارتباط با نوا برقرار نشد. دوباره تلاش کن.';
+    pendingReply.classList.add('error');
+  } finally {
+    input.disabled = false;
+    submitButton.disabled = false;
+    input.focus();
+  }
 });
