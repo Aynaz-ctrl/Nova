@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>چت‌بات | AyNova AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="chatbot.css?v=1" />
+    <script src="chatbot.js?v=1" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="dashboard.html"><span>✦</span> Aynova <em>AI</em></a>
+      <nav aria-label="منوی اصلی">
+        <a href="dashboard.html"><b>⌂</b>خانه</a><a href="courses.html?v=10"><b>▣</b>دوره‌ها</a><a href="challenges.html?v=1"><b>✎</b>چالش‌ها</a><a href="quizzes.html?v=1"><b>✓</b>آزمون‌ها</a><a href="progress.html?v=2"><b>⌁</b>پیشرفت</a><a class="active" href="chatbot.html?v=1"><b>◌</b>چت‌بات</a>
+      </nav>
+    </aside>
+    <main class="chat-page">
+      <section class="chat-title"><p>مربی یادگیری تو</p><h1>از نوا بپرس</h1><span>هر سوالی دربارهٔ درس‌ها داری، اینجا بنویس.</span></section>
+      <section class="chat-card" aria-label="گفت‌وگو با نوا">
+        <div class="welcome-message"><strong>سلام <span id="student-name">دوست من</span>!</strong><p>من نوا هستم. می‌توانم در مسیر یادگیری هوش مصنوعی کنارت باشم.</p></div>
+        <div class="chat-messages" id="chat-messages" aria-live="polite"></div>
+        <form class="chat-form" id="chat-form"><label class="sr-only" for="chat-input">پیامت را بنویس</label><input id="chat-input" autocomplete="off" placeholder="سوالت را اینجا بنویس..." /><button type="submit">ارسال</button></form>
+      </section>
+    </main>
+  </body>
+</html>
