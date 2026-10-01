@@ -24,6 +24,14 @@ document.querySelector('#edit-avatar').addEventListener('click', () => {
   setCharacter(character);
 });
 
+const editableFields = Object.values(fields);
+document.querySelector('#start-edit').addEventListener('click', () => {
+  editableFields.forEach((field) => { field.disabled = false; });
+  document.querySelector('#start-edit').hidden = true;
+  document.querySelector('#save-profile').hidden = false;
+  fields.firstName.focus();
+});
+
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   localStorage.setItem('aynovaFirstName', fields.firstName.value.trim() || 'دوست من');
@@ -31,4 +39,7 @@ form.addEventListener('submit', (event) => {
   localStorage.setItem('aynovaAge', fields.age.value);
   localStorage.setItem('aynovaParentPhone', fields.phone.value.trim());
   document.querySelector('#saved-message').hidden = false;
+  editableFields.forEach((field) => { field.disabled = true; });
+  document.querySelector('#start-edit').hidden = false;
+  document.querySelector('#save-profile').hidden = true;
 });
