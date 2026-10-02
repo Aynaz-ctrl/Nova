@@ -6,113 +6,157 @@ from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 
-OUT='/project/outputs/NOVA_MVP_PRODUCT_DEVELOPMENT_PLAN.docx'
-NAVY='0F1E3F'; BLUE='B7E4F7'; GREY='E9EDF3'; WHITE='FFFFFF'
-doc=Document()
-zoom=doc.settings.element.find(qn('w:zoom'))
+OUT='/project/outputs/NOVA_MVP_EXECUTIVE_PRODUCT_PLAN.docx'
+NAVY='0F1E3F'; BLUE='B7E4F7'; WHITE='FFFFFF'
+
+def xml(tag, **attrs):
+    e=OxmlElement(tag)
+    for k,v in attrs.items(): e.set(qn(k),str(v))
+    return e
+
+def shade(cell, fill):
+    pr=cell._tc.get_or_add_tcPr(); pr.append(xml('w:shd', **{'w:val':'clear','w:fill':fill}))
+
+def border(cell, color=BLUE, size='8'):
+    pr=cell._tc.get_or_add_tcPr(); b=xml('w:tcBorders')
+    for edge in ('top','left','bottom','right'):
+        b.append(xml('w:'+edge, **{'w:val':'single','w:sz':size,'w:color':color}))
+    shd=pr.find(qn('w:shd'))
+    if shd is not None: pr.insert(list(pr).index(shd), b)
+    else: pr.append(b)
+
+def rtl_paragraph(p, align=WD_ALIGN_PARAGRAPH.RIGHT):
+    p.alignment=align
+    pPr=p._p.get_or_add_pPr()
+
+def text(p, value, bold=False, size=10, color=NAVY, align=WD_ALIGN_PARAGRAPH.RIGHT):
+    rtl_paragraph(p,align)
+    r=p.add_run(value); r.bold=bold; r.font.name='Arial'; r.font.size=Pt(size); r.font.color.rgb=RGBColor.from_string(color)
+    r._element.get_or_add_rPr().append(xml('w:rtl', **{'w:val':'1'}))
+    return r
+
+def set_table_rtl(t):
+    t.alignment=WD_TABLE_ALIGNMENT.CENTER; t.autofit=False
+    pr=t._tbl.tblPr
+    bidi=xml('w:bidiVisual', **{'w:val':'1'})
+    pr.insert(0, bidi)
+
+def no_split(row): row._tr.get_or_add_trPr().append(xml('w:cantSplit'))
+def header_repeat(row): row._tr.get_or_add_trPr().append(xml('w:tblHeader', **{'w:val':'true'}))
+
+def add_heading(doc, title, number=None):
+    p=doc.add_paragraph(); p.paragraph_format.space_before=Pt(10); p.paragraph_format.space_after=Pt(10)
+    if number:
+        text(p,number+'   ',True,11,BLUE,WD_ALIGN_PARAGRAPH.RIGHT)
+    text(p,title,True,21,NAVY,WD_ALIGN_PARAGRAPH.RIGHT)
+    p.paragraph_format.border_bottom = None
+    return p
+
+def add_rule(doc):
+    p=doc.add_paragraph(); p.paragraph_format.space_after=Pt(8)
+
+def make_table(doc, headers, rows, widths, fs=8.5, header_fill=NAVY):
+    t=doc.add_table(rows=1, cols=len(headers)); set_table_rtl(t)
+    h=t.rows[0]
+    for i,label in enumerate(headers):
+        c=h.cells[i]; c.width=Inches(widths[i]); shade(c,header_fill); border(c,header_fill)
+        text(c.paragraphs[0],label,True,fs,WHITE,WD_ALIGN_PARAGRAPH.CENTER); c.vertical_alignment=WD_CELL_VERTICAL_ALIGNMENT.CENTER
+    header_repeat(h)
+    for index,row in enumerate(rows):
+        r=t.add_row(); no_split(r)
+        for i,value in enumerate(row):
+            c=r.cells[i]; c.width=Inches(widths[i]); shade(c,WHITE if index%2==0 else 'F4FBFE'); border(c)
+            align=WD_ALIGN_PARAGRAPH.CENTER if i in (0,3,4) else WD_ALIGN_PARAGRAPH.RIGHT
+            text(c.paragraphs[0],str(value),False,fs,NAVY,align); c.vertical_alignment=WD_CELL_VERTICAL_ALIGNMENT.CENTER
+    return t
+
+def page(doc): doc.add_page_break()
+
+def card_table(doc, items):
+    t=doc.add_table(rows=1,cols=3); set_table_rtl(t)
+    for idx,(num,priority,title,lines,note) in enumerate(items):
+        c=t.cell(0,idx); c.width=Inches(3.42); shade(c,'F4FBFE'); border(c,NAVY,'12')
+        text(c.paragraphs[0],num,True,24,BLUE,WD_ALIGN_PARAGRAPH.RIGHT)
+        text(c.add_paragraph(),priority,True,21,NAVY,WD_ALIGN_PARAGRAPH.RIGHT)
+        text(c.add_paragraph(),title,True,10,NAVY,WD_ALIGN_PARAGRAPH.RIGHT)
+        for line in lines: text(c.add_paragraph(),line,False,8.6,NAVY,WD_ALIGN_PARAGRAPH.RIGHT)
+        if note: text(c.add_paragraph(),note,True,8,NAVY,WD_ALIGN_PARAGRAPH.RIGHT)
+    return t
+
+doc=Document(); zoom=doc.settings.element.find(qn('w:zoom'))
 if zoom is not None: zoom.set(qn('w:percent'),'100')
-sec=doc.sections[0]
-sec.orientation=WD_ORIENT.LANDSCAPE
-sec.page_width, sec.page_height = Inches(11.69), Inches(8.27)
-sec.left_margin=sec.right_margin=Inches(.55)
-sec.top_margin=Inches(.55); sec.bottom_margin=Inches(.55)
-
-styles=doc.styles
-styles['Normal'].font.name='Arial'; styles['Normal']._element.rPr.rFonts.set(qn('w:eastAsia'),'Arial'); styles['Normal'].font.size=Pt(9)
-for nm,size in [('Title',28),('Heading 1',18),('Heading 2',13)]:
- s=styles[nm]; s.font.name='Arial'; s.font.size=Pt(size); s.font.bold=True; s.font.color.rgb=RGBColor.from_string(NAVY)
-
-def set_cell_shading(cell, fill):
- tcPr=cell._tc.get_or_add_tcPr(); shd=OxmlElement('w:shd'); shd.set(qn('w:val'),'clear'); shd.set(qn('w:fill'),fill); tcPr.append(shd)
-def set_cell_border(cell,color='B7E4F7'):
- pass
-def rtl(p,align=WD_ALIGN_PARAGRAPH.RIGHT):
- p.alignment=align
-def add_text(p,text,bold=False,size=None,color=None,align=WD_ALIGN_PARAGRAPH.RIGHT):
- rtl(p,align); r=p.add_run(text); r.bold=bold; r.font.name='Arial'; r._element.rPr.rFonts.set(qn('w:cs'),'Arial'); r.font.size=Pt(size or 9)
- if color:r.font.color.rgb=RGBColor.from_string(color)
- return r
-def add_heading(text,level=1):
- p=doc.add_paragraph(); p.paragraph_format.space_before=Pt(12); p.paragraph_format.space_after=Pt(5); add_text(p,text,True,18 if level==1 else 13,NAVY); return p
-def repeat_header(row):
- trPr=row._tr.get_or_add_trPr(); el=OxmlElement('w:tblHeader'); el.set(qn('w:val'),'true'); trPr.append(el)
-def cant_split(row):
- trPr=row._tr.get_or_add_trPr(); el=OxmlElement('w:cantSplit'); trPr.append(el)
-def table(headers,rows,widths,font=8):
- t=doc.add_table(rows=1, cols=len(headers)); t.alignment=WD_TABLE_ALIGNMENT.CENTER; t.autofit=False
- for i,h in enumerate(headers):
-  c=t.rows[0].cells[i]; c.width=Inches(widths[i]); set_cell_shading(c,NAVY); set_cell_border(c,NAVY)
-  p=c.paragraphs[0]; add_text(p,h,True,font,WHITE,WD_ALIGN_PARAGRAPH.CENTER); c.vertical_alignment=WD_CELL_VERTICAL_ALIGNMENT.CENTER
- repeat_header(t.rows[0])
- for ri,row in enumerate(rows):
-  cells=t.add_row().cells; cant_split(t.rows[-1])
-  for i,val in enumerate(row):
-   c=cells[i]; c.width=Inches(widths[i]); set_cell_shading(c,WHITE if ri%2==0 else 'F7FAFC'); set_cell_border(c)
-   p=c.paragraphs[0]; add_text(p,str(val),False,font,NAVY,WD_ALIGN_PARAGRAPH.CENTER if i in [0,1,3,5] else WD_ALIGN_PARAGRAPH.RIGHT)
-   c.vertical_alignment=WD_CELL_VERTICAL_ALIGNMENT.CENTER
- for row in t.rows:
-  for c in row.cells:
-   pass
- doc.add_paragraph().paragraph_format.space_after=Pt(3)
- return t
-
-def page_break(): doc.add_page_break()
-# Header footer
-header=sec.header.paragraphs[0]; header.paragraph_format.space_after=Pt(4); header.paragraph_format.border_bottom= None
-add_text(header,'NOVA  |  MVP PRODUCT DEVELOPMENT PLAN',True,8,NAVY,WD_ALIGN_PARAGRAPH.LEFT)
-footer=sec.footer.paragraphs[0]; footer.alignment=WD_ALIGN_PARAGRAPH.CENTER
-r=footer.add_run('NOVA  •  CONFIDENTIAL  |  '); r.font.size=Pt(8); r.font.color.rgb=RGBColor.from_string(NAVY)
-fld=OxmlElement('w:fldSimple'); fld.set(qn('w:instr'),'PAGE'); footer._p.append(fld)
-# Cover
-for _ in range(5): doc.add_paragraph()
-p=doc.add_paragraph(); add_text(p,'NOVA',True,42,NAVY,WD_ALIGN_PARAGRAPH.CENTER); p.paragraph_format.space_after=Pt(16)
-p=doc.add_paragraph(); add_text(p,'MVP PRODUCT DEVELOPMENT PLAN',True,20,NAVY,WD_ALIGN_PARAGRAPH.CENTER)
-p=doc.add_paragraph(); add_text(p,'نقشه توسعه محصول SaaS آموزشی نوا',False,14,NAVY,WD_ALIGN_PARAGRAPH.CENTER)
-p=doc.add_paragraph(); add_text(p,'14-Day Sprint | Product Execution Plan',True,11,NAVY,WD_ALIGN_PARAGRAPH.CENTER)
-doc.add_paragraph()
-t=doc.add_table(rows=1,cols=1); c=t.cell(0,0); set_cell_shading(c,BLUE); set_cell_border(c,BLUE); add_text(c.paragraphs[0],'PRODUCT EXECUTION BRIEF',True,10,NAVY,WD_ALIGN_PARAGRAPH.CENTER)
-page_break()
-# Intro
-add_heading('Nova چیست؟')
-t=doc.add_table(rows=1,cols=1); c=t.cell(0,0); set_cell_shading(c,'F4FBFE'); set_cell_border(c); add_text(c.paragraphs[0],'«Nova یک SaaS آموزشی در حوزه هوش مصنوعی است که برای دانش‌آموزان حدود ۹ تا ۱۳ سال طراحی شده است. کاربر در Nova مفاهیم مقدماتی هوش مصنوعی را از طریق آموزش ویدئویی، شخصیت آموزشی، چالش‌ها و آزمون‌ها یاد می‌گیرد و روند پیشرفت خود را مشاهده می‌کند. این محصول علاوه بر ایجاد یک تجربه آموزشی تعاملی، مسیر ارتباط کاربر با دوره‌های اصلی و پیشرفته‌تر آموزشی را نیز فراهم می‌کند.»',False,11,NAVY)
-add_heading('چرا Nova؟')
-t=doc.add_table(rows=1,cols=1); c=t.cell(0,0); set_cell_shading(c,'F4FBFE'); set_cell_border(c); add_text(c.paragraphs[0],'«نام Nova کوتاه، مدرن و قابل توسعه است و مفهوم آغاز یک اتفاق جدید و نوآوری را منتقل می‌کند. این نام برای محصولی انتخاب شده که هدف آن ایجاد تجربه‌ای متفاوت و تعاملی برای ورود نسل جدید به دنیای هوش مصنوعی است.»',False,11,NAVY)
-add_heading('Product Development Priorities')
-t=doc.add_table(rows=1,cols=3); t.autofit=False
-cards=[('P0 — CORE MVP',['۱. ویدئوهای دوره','۲. مرتبط کردن تیترهای دوره با ویدئوها','۳. API','۴. مرتبط کردن چالش‌ها با ویدئوها','۵. مرتبط کردن آزمون‌ها با ویدئوها','۶. ذخیره اطلاعات + پرداخت + اعتبارسنجی پرداخت','۷. اتصال درگاه پرداخت']),('P1 — PRODUCT GROWTH',['۱. اضافه کردن کانال و پیج','۲. سیستم گزارش والدین — ۲ روز','۳. اضافه کردن کاراکترهای بیشتر']),('P2 — ADVANCED',['۱. صوتی کردن Chatbot — ۳ روز'])]
-for i,(title,items) in enumerate(cards):
- c=t.cell(0,i); c.width=Inches(3.45); set_cell_shading(c,'F4FBFE'); set_cell_border(c)
- p=c.paragraphs[0]; add_text(p,title,True,11,NAVY,WD_ALIGN_PARAGRAPH.CENTER)
- for item in items: add_text(c.add_paragraph(),item,False,9,NAVY)
-p=doc.add_paragraph(); add_text(p,'Scope Note: VR در این Sprint قرار ندارد.',True,9,NAVY)
-page_break()
-# Execution
-add_heading('14-Day Sprint Execution')
-exec_rows=[
-['روز 1','P0','ویدئوهای دوره','1 روز','—','□'],['روز 2','P0','مرتبط کردن تیترهای دوره با ویدئوها','1 روز','ویدئوهای دوره','□'],['روز 3','P0','API','1 روز','ساختار دوره','□'],['روز 4','P0','مرتبط کردن چالش‌ها با ویدئوها','1 روز','API + ویدئوها','□'],['روز 5','P0','مرتبط کردن آزمون‌ها با ویدئوها','1 روز','API + ویدئوها','□'],['روز 6','P0','ذخیره اطلاعات + پرداخت + اعتبارسنجی پرداخت','1 روز','API','□'],['روز 7','P0','اتصال درگاه پرداخت','1 روز','سیستم پرداخت','□'],['روز 8','P1','اضافه کردن کانال و پیج','1 روز','صفحه اصلی','□'],['روز 9','P1','سیستم گزارش والدین — بخش اول','1 روز','ذخیره اطلاعات','□'],['روز 10','P1','سیستم گزارش والدین — بخش دوم','1 روز','روز 9','□'],['روز 11','P1','اضافه کردن کاراکترهای بیشتر','1 روز','سیستم کاراکتر','□'],['روز 12','P2','صوتی کردن Chatbot — بخش اول','1 روز','Chatbot','□'],['روز 13','P2','صوتی کردن Chatbot — بخش دوم','1 روز','روز 12','□'],['روز 14','—','تست کامل MVP + رفع ایرادات','1 روز','تکمیل قابلیت‌های برنامه','□']]
-table(['روز','P','Task','زمان','وابستگی','وضعیت'],exec_rows,[.7,.45,3.6,.7,2.8,.6],8.5)
-p=doc.add_paragraph(); add_text(p,'روز ۱۴ روز کاریِ توسعه قابلیت جدید نیست؛ فقط برای Testing، QA، پیدا کردن Bug، رفع ایرادات و اطمینان از درست کار کردن کل MVP است.',True,9,NAVY)
-page_break()
-# DoD
-defrows=[]
-data=[
-('P0','ویدئوهای دوره','دانش‌آموز بتواند محتوای دوره را مشاهده و یاد بگیرد.','ویدئوهای دوره','هر ۱۶ ویدئو ضبط، آماده، بارگذاری و قابل پخش باشند.'),('P0','مرتبط کردن تیترهای دوره با ویدئوها','دانش‌آموز بتواند از هر تیتر به محتوای مرتبط دسترسی داشته باشد.','ویدئوهای دوره','تمام تیترها به ویدئوی صحیح متصل و تست شده باشند.'),('P0','API','بخش‌های مختلف Nova بتوانند اطلاعات موردنیاز را با یکدیگر تبادل کنند.','ساختار دوره','APIهای موردنیاز پیاده‌سازی و تست شده باشند.'),('P0','مرتبط کردن چالش‌ها با ویدئوها','دانش‌آموز بتواند برای هر بخش، چالش مرتبط را انجام دهد.','API + ویدئوها','چالش‌های مربوط به هر بخش به محتوای صحیح متصل و قابل اجرا باشند.'),('P0','مرتبط کردن آزمون‌ها با ویدئوها','دانش‌آموز بتواند بعد از یادگیری محتوای مرتبط، آزمون را انجام دهد.','API + ویدئوها','آزمون‌ها به محتوای صحیح متصل باشند و نتیجه آزمون ذخیره شود.'),('P0','ذخیره اطلاعات + پرداخت + اعتبارسنجی پرداخت','اطلاعات کاربر و وضعیت پرداخت به شکل صحیح مدیریت شود.','API','اطلاعات ذخیره شوند و پرداخت‌های تأییدنشده پذیرفته نشوند.'),('P0','اتصال درگاه پرداخت','کاربر بتواند پرداخت واقعی انجام دهد.','سیستم پرداخت','درگاه متصل و پرداخت آزمایشی با موفقیت انجام شده باشد.'),('P1','اضافه کردن کانال و پیج','کاربر بتواند به کانال و پیج دسترسی داشته باشد.','صفحه اصلی','لینک‌ها اضافه و تست شده باشند.'),('P1','سیستم گزارش والدین — بخش اول','اطلاعات موردنیاز برای گزارش فعالیت دانش‌آموز جمع‌آوری شود.','ذخیره اطلاعات','ساختار گزارش و داده‌های موردنیاز آماده باشند.'),('P1','سیستم گزارش والدین — بخش دوم','والد بتواند فعالیت یا عدم فعالیت دانش‌آموز را پیگیری کند.','روز 9','گزارش روزانه و پیام عدم ورود دانش‌آموز فعال باشند.'),('P1','اضافه کردن کاراکترهای بیشتر','دانش‌آموز بتواند از میان کاراکترهای بیشتری انتخاب کند.','سیستم کاراکتر','کاراکترهای جدید اضافه و قابل انتخاب باشند.'),('P2','صوتی کردن Chatbot — بخش اول','تعامل اولیه صوتی با Chatbot ایجاد شود.','Chatbot','زیرساخت اولیه Voice آماده باشد.'),('P2','صوتی کردن Chatbot — بخش دوم','تعامل صوتی کامل‌تر با Chatbot امکان‌پذیر شود.','روز 12','قابلیت‌های اصلی Voice کار کنند.'),('—','تست کامل MVP + رفع ایرادات','کاربر بتواند MVP را بدون خطاهای اصلی استفاده کند.','تکمیل قابلیت‌های برنامه','تمام بخش‌های MVP از ابتدا تا انتها تست شده، ایرادات اصلی رفع شده و نسخه آماده ارائه باشد.')]
-for i,(p,task,jtbd,dep,dod) in enumerate(data,1): defrows.append([f'روز {i}',p,task,jtbd,'1 روز',dep,dod])
-add_heading('Task Definition & Definition of Done')
-table(['روز','P','Task','JTBD','زمان','وابستگی','DoD'],defrows,[.55,.35,1.55,2.4,.55,1.4,2.45],7.2)
-page_break()
-# Tracking
-add_heading('Sprint Daily Tracking')
+sec=doc.sections[0]; sec.orientation=WD_ORIENT.LANDSCAPE; sec.page_width=Inches(11.69); sec.page_height=Inches(8.27)
+sec.left_margin=sec.right_margin=Inches(.55); sec.top_margin=Inches(.55); sec.bottom_margin=Inches(.55)
+normal=doc.styles['Normal']; normal.font.name='Arial'; normal.font.size=Pt(10)
+# header/footer
+hp=sec.header.paragraphs[0]; text(hp,'NOVA  |  MVP PRODUCT DEVELOPMENT PLAN',True,8,NAVY,WD_ALIGN_PARAGRAPH.LEFT)
+fp=sec.footer.paragraphs[0]; fp.alignment=WD_ALIGN_PARAGRAPH.CENTER
+r=fp.add_run('NOVA  •  PRODUCT EXECUTION BRIEF  •  '); r.font.size=Pt(8); r.font.color.rgb=RGBColor.from_string(NAVY)
+fld=OxmlElement('w:fldSimple'); fld.set(qn('w:instr'),'PAGE'); fp._p.append(fld)
+# 01 Cover
+for _ in range(3): doc.add_paragraph()
+cover=doc.add_table(rows=1,cols=1); set_table_rtl(cover); c=cover.cell(0,0); shade(c,NAVY); border(c,NAVY)
+for _ in range(3): c.add_paragraph()
+text(c.paragraphs[0],'NOVA',True,42,WHITE,WD_ALIGN_PARAGRAPH.CENTER)
+text(c.add_paragraph(),'MVP PRODUCT DEVELOPMENT PLAN',True,20,WHITE,WD_ALIGN_PARAGRAPH.CENTER)
+text(c.add_paragraph(),'نقشه توسعه محصول SaaS آموزشی نوا',False,15,BLUE,WD_ALIGN_PARAGRAPH.CENTER)
+text(c.add_paragraph(),'14-DAY SPRINT',True,12,WHITE,WD_ALIGN_PARAGRAPH.CENTER)
+for _ in range(3): c.add_paragraph()
+p=doc.add_paragraph(); text(p,'PRODUCT EXECUTION  /  14 DAYS  /  MVP DELIVERY',True,9,NAVY,WD_ALIGN_PARAGRAPH.CENTER)
+page(doc)
+# 02 Introduction
+add_heading(doc,'NOVA','01'); add_rule(doc)
+for title,body in [('«Nova چیست؟»','Nova یک SaaS آموزشی در حوزه هوش مصنوعی است که برای دانش‌آموزان حدود ۹ تا ۱۳ سال طراحی شده است. کاربر در Nova مفاهیم مقدماتی هوش مصنوعی را از طریق آموزش ویدئویی، شخصیت آموزشی، چالش‌ها و آزمون‌ها یاد می‌گیرد و روند پیشرفت خود را مشاهده می‌کند.'),('«چرا Nova؟»','نام Nova کوتاه، مدرن و قابل توسعه است و مفهوم آغاز یک اتفاق جدید و نوآوری را منتقل می‌کند.')]:
+    t=doc.add_table(rows=1,cols=1); set_table_rtl(t); c=t.cell(0,0); shade(c,'F4FBFE'); border(c,NAVY,'12')
+    text(c.paragraphs[0],title,True,15,NAVY); text(c.add_paragraph(),body,False,12,NAVY)
+    doc.add_paragraph()
+page(doc)
+# 03 priorities
+add_heading(doc,'PRODUCT DEVELOPMENT PRIORITIES','02'); add_rule(doc)
+card_table(doc,[
+ ('01','P0','CORE MVP',['۱. ویدئوهای دوره','۲. مرتبط کردن تیترهای دوره با ویدئوها','۳. API','۴. مرتبط کردن چالش‌ها با ویدئوها','۵. مرتبط کردن آزمون‌ها با ویدئوها','۶. ذخیره اطلاعات + پرداخت + اعتبارسنجی پرداخت','۷. اتصال درگاه پرداخت'],''),
+ ('02','P1','PRODUCT GROWTH',['۱. اضافه کردن کانال و پیج','۲. سیستم گزارش والدین — ۲ روز','۳. اضافه کردن کاراکترهای بیشتر'],''),
+ ('03','P2','ADVANCED FEATURES',['۱. صوتی کردن Chatbot — ۳ روز'],'VR فعلاً در این Sprint قرار ندارد.')])
+page(doc)
+# 04+ task table
+add_heading(doc,'TASK DEFINITION','03'); add_rule(doc)
+taskrows=[
+['P0','ویدئوهای دوره','دانش‌آموز بتواند محتوای دوره را مشاهده و یاد بگیرد','۱ روز','—','هر ۱۶ ویدئو آماده، بارگذاری و قابل پخش باشند.'],
+['P0','مرتبط کردن تیترهای دوره با ویدئوها','دانش‌آموز بتواند از هر تیتر به محتوای مرتبط برسد','۱ روز','ویدئوها','تمام تیترها به ویدئوی صحیح متصل و تست شده باشند.'],
+['P0','API','بخش‌های مختلف Nova بتوانند اطلاعات موردنیاز را با یکدیگر تبادل کنند','۱ روز','ساختار دوره','APIهای موردنیاز پیاده‌سازی و تست شده باشند.'],
+['P0','مرتبط کردن چالش‌ها با ویدئوها','دانش‌آموز بتواند Challenge مرتبط با هر بخش را انجام دهد','۱ روز','API + ویدئوها','Challengeها به محتوای صحیح متصل و قابل اجرا باشند.'],
+['P0','مرتبط کردن آزمون‌ها با ویدئوها','دانش‌آموز بتواند آزمون مرتبط با محتوای یادگرفته‌شده را انجام دهد','۱ روز','API + ویدئوها','آزمون‌ها متصل و نتیجه آن‌ها ثبت شود.'],
+['P0','ذخیره اطلاعات + پرداخت + اعتبارسنجی','اطلاعات کاربر و وضعیت پرداخت صحیح مدیریت شود','۱ روز','API','اطلاعات ذخیره و پرداخت تأییدنشده رد شود.'],
+['P0','اتصال درگاه پرداخت','کاربر بتواند پرداخت واقعی انجام دهد','۱ روز','سیستم پرداخت','درگاه متصل و پرداخت آزمایشی موفق باشد.'],
+['P1','اضافه کردن کانال و پیج','کاربر بتواند به کانال و پیج دسترسی پیدا کند','۱ روز','صفحه اصلی','لینک‌ها اضافه و تست شده باشند.'],
+['P1','سیستم گزارش والدین — بخش اول','اطلاعات لازم برای گزارش فعالیت دانش‌آموز آماده شود','۱ روز','ذخیره اطلاعات','ساختار گزارش آماده باشد.'],
+['P1','سیستم گزارش والدین — بخش دوم','والد بتواند فعالیت یا عدم فعالیت دانش‌آموز را پیگیری کند','۱ روز','روز ۹','گزارش روزانه و پیام عدم ورود فعال باشند.'],
+['P1','اضافه کردن کاراکترهای بیشتر','دانش‌آموز بتواند از بین شخصیت‌های بیشتری انتخاب کند','۱ روز','سیستم کاراکتر','کاراکترهای جدید اضافه و قابل انتخاب باشند.'],
+['P2','صوتی کردن Chatbot — بخش اول','تعامل صوتی اولیه ایجاد شود','۱ روز','Chatbot','زیرساخت صوتی آماده باشد.'],
+['P2','صوتی کردن Chatbot — بخش دوم','تعامل صوتی کامل‌تر شود','۱ روز','روز ۱۲','قابلیت‌های اصلی صوتی کار کنند.'],
+['P2','صوتی کردن Chatbot — بخش سوم','قابلیت صوتی آماده استفاده باشد','۱ روز','روز ۱۳','قابلیت صوتی نهایی تست شده باشد.'],
+['P0','تست و Validation نهایی MVP','کاربر بتواند MVP را بدون ایرادات اصلی استفاده کند','۱ روز','تکمیل قابلیت‌ها','کل MVP تست و ایرادات اصلی رفع شده باشند.']]
+make_table(doc,['P','Task','JTBD','زمان','وابستگی','DoD'],taskrows,[.45,1.75,2.35,.55,1.2,3.45],7.5)
+page(doc)
+# 05 execution
+add_heading(doc,'14-DAY EXECUTION PLAN','04'); add_rule(doc)
+execution=[['روز ۱','P0','ویدئوهای دوره','۱ روز','□'],['روز ۲','P0','مرتبط کردن تیترهای دوره با ویدئوها','۱ روز','□'],['روز ۳','P0','API','۱ روز','□'],['روز ۴','P0','مرتبط کردن چالش‌ها با ویدئوها','۱ روز','□'],['روز ۵','P0','مرتبط کردن آزمون‌ها با ویدئوها','۱ روز','□'],['روز ۶','P0','ذخیره اطلاعات + پرداخت + اعتبارسنجی','۱ روز','□'],['روز ۷','P0','اتصال درگاه پرداخت','۱ روز','□'],['روز ۸','P1','اضافه کردن کانال و پیج','۱ روز','□'],['روز ۹','P1','سیستم گزارش والدین — بخش اول','۱ روز','□'],['روز ۱۰','P1','سیستم گزارش والدین — بخش دوم','۱ روز','□'],['روز ۱۱','P1','اضافه کردن کاراکترهای بیشتر','۱ روز','□'],['روز ۱۲','P2','صوتی کردن Chatbot — بخش اول','۱ روز','□'],['روز ۱۳','P2','صوتی کردن Chatbot — بخش دوم','۱ روز','□'],['روز ۱۴','—','تست کامل MVP + رفع ایرادات','۱ روز','□']]
+make_table(doc,['روز','P','Task','زمان','وضعیت'],execution,[1.1,.6,5.3,1,1],10)
+p=doc.add_paragraph(); text(p,'روز ۱۴ فقط برای Testing، QA، Bug Fixing و MVP Validation است.',True,10,NAVY)
+page(doc)
+# 06 Tracking
+add_heading(doc,'SPRINT DAILY TRACKING','05'); add_rule(doc)
 tracking=[[f'روز {i}','', '□','□',''] for i in range(1,15)]
-table(['روز','Task','✓ انجام شد','✕ انجام نشد','توضیحات'],tracking,[.9,3.3,1.25,1.25,2.8],9)
-add_heading('JTBD & DoD',2)
-t=doc.add_table(rows=1,cols=2); t.autofit=False
-for i,(a,b) in enumerate([('JTBD\nJob To Be Done','«کاری که کاربر با استفاده از محصول می‌خواهد انجام دهد.»'),('DoD\nDefinition of Done','«معیارهایی که مشخص می‌کنند یک Task واقعاً تمام شده است.»')]):
- c=t.cell(0,i); c.width=Inches(4.75); set_cell_shading(c,'F4FBFE'); set_cell_border(c); add_text(c.paragraphs[0],a,True,11,NAVY,WD_ALIGN_PARAGRAPH.CENTER); add_text(c.add_paragraph(),b,False,9,NAVY,WD_ALIGN_PARAGRAPH.CENTER)
-add_heading('MVP FINAL VALIDATION',2)
-t=doc.add_table(rows=1,cols=1); c=t.cell(0,0); set_cell_shading(c,'F4FBFE'); set_cell_border(c)
-checks=['تمام ۱۶ ویدئو قابل پخش هستند.','تمام تیترها به ویدئوی صحیح متصل هستند.','APIها تست شده‌اند.','چالش‌ها به محتوای صحیح متصل هستند.','آزمون‌ها به محتوای صحیح متصل هستند.','اطلاعات کاربر به درستی ذخیره می‌شود.','پرداخت و اعتبارسنجی پرداخت تست شده است.','درگاه پرداخت تست شده است.','لینک کانال و پیج فعال هستند.','سیستم گزارش والدین تست شده است.','کاراکترهای جدید قابل انتخاب هستند.','Chatbot صوتی تست شده است.','کل مسیر کاربر از ورود تا استفاده از محصول تست شده است.','ایرادات اصلی رفع شده‌اند.','MVP آماده ارائه است.']
-for i,x in enumerate(checks):
- p=c.paragraphs[0] if i==0 else c.add_paragraph(); add_text(p,'□ '+x,False,8.5,NAVY)
+make_table(doc,['روز','Task','✓ انجام شد','✕ انجام نشد','توضیحات'],tracking,[1,3.4,1.35,1.35,2.9],10)
+page(doc)
+# 07 Validation
+add_heading(doc,'MVP FINAL VALIDATION','06'); add_rule(doc)
+t=doc.add_table(rows=1,cols=1); set_table_rtl(t); c=t.cell(0,0); shade(c,'F4FBFE'); border(c,NAVY,'12')
+checks=['۱۶ ویدئو قابل پخش هستند.','تیترها به ویدئوهای صحیح متصل هستند.','APIها تست شده‌اند.','Challengeها متصل هستند.','آزمون‌ها متصل هستند.','اطلاعات کاربر ذخیره می‌شود.','پرداخت و اعتبارسنجی تست شده است.','درگاه پرداخت تست شده است.','کانال و پیج متصل هستند.','سیستم گزارش والدین تست شده است.','کاراکترهای جدید قابل انتخاب هستند.','Chatbot صوتی تست شده است.','کل مسیر کاربر تست شده است.','ایرادات اصلی رفع شده‌اند.','MVP آماده ارائه است.']
+for i,item in enumerate(checks): text(c.paragraphs[0] if i==0 else c.add_paragraph(),'□  '+item,False,10,NAVY)
+doc.add_paragraph()
+t=doc.add_table(rows=1,cols=2); set_table_rtl(t)
+for i,(title,definition) in enumerate([('JTBD\nJob To Be Done','«کاری که کاربر با استفاده از محصول می‌خواهد انجام دهد.»'),('DoD\nDefinition of Done','«معیارهایی که مشخص می‌کنند یک Task واقعاً تمام شده است.»')]):
+    c=t.cell(0,i); shade(c,'F4FBFE'); border(c,NAVY,'12'); text(c.paragraphs[0],title,True,13,NAVY); text(c.add_paragraph(),definition,False,10,NAVY)
 doc.save(OUT)
 print(OUT)
