@@ -12,6 +12,7 @@ characterForm.addEventListener('submit', (event) => {
 
   if (!selectedCharacter) {
     characterError.hidden = false;
+    characterError.focus();
     return;
   }
 
