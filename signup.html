@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="signup.css?v=3" />
-    <script src="signup.js?v=4" defer></script>
+    <script src="signup.js?v=5" defer></script>
   </head>
   <body>
     <header class="topbar">
@@ -36,7 +36,7 @@
           <input id="last-name" name="last-name" type="text" required />
 
           <label for="parent-phone">شماره تماس والد</label>
-          <input id="parent-phone" name="parent-phone" type="tel" inputmode="numeric" placeholder="۰۹۱۲۱۲۳۴۵۶۷" required />
+          <input id="parent-phone" name="parent-phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="۰۹۱۲۱۲۳۴۵۶۷" required />
 
           <label for="age">سن</label>
           <select id="age" name="age" required>
