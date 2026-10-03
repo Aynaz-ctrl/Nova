@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { randomUUID } = require('node:crypto');
 const { addMessage, getLearner, saveProgress, upsertLearner } = require('./database');
+const { generateReply } = require('./ai-client');
 
 const port = Number(process.env.PORT) || 3000;
 const publicDirectory = __dirname;
@@ -106,7 +107,7 @@ const server = http.createServer(async (request, response) => {
       }
       const id = learnerId(body.learnerId);
       const learner = upsertLearner(id, typeof body.name === 'string' ? body.name.trim().slice(0, 50) : '');
-      const reply = replyFor(body.message, learner.name);
+      const reply = await generateReply(body.message, learner.name) || replyFor(body.message, learner.name);
       addMessage(id, 'user', body.message.trim());
       addMessage(id, 'assistant', reply);
       sendJson(response, 200, { learnerId: id, reply });

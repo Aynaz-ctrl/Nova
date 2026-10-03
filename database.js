@@ -11,6 +11,7 @@ function read() {
 }
 
 function write(database) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
   const temporaryPath = `${filePath}.tmp`;
   fs.writeFileSync(temporaryPath, `${JSON.stringify(database, null, 2)}\n`);
   fs.renameSync(temporaryPath, filePath);
