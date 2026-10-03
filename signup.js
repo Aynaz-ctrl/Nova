@@ -11,6 +11,7 @@ signupForm.addEventListener('submit', (event) => {
 
   if (!firstName || !lastName || !parentPhone || !age || !gender) {
     signupError.hidden = false;
+    signupError.focus();
     return;
   }
 
