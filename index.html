@@ -14,7 +14,8 @@
       href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=3" />
+    <link rel="stylesheet" href="styles.css?v=4" />
+    <script src="index.js?v=1" defer></script>
     <style>
       .hero-visual::before,
       .hero-visual::after {
@@ -101,17 +102,31 @@
         </div>
       </section>
 
-      <section class="journey section-shell">
-        <div>
-          <p class="eyebrow">یک مسیر روشن</p>
-          <h2>از کنجکاوی تا ساختن</h2>
+      <section class="contact section-shell" id="contact" aria-labelledby="contact-title">
+        <div class="contact-copy">
+          <p class="eyebrow">ارتباط با آی‌نوا</p>
+          <h2 id="contact-title">سؤال داری؟ کنار تو هستیم</h2>
+          <p>برای خبرها، آموزش‌های تازه و ارتباط با ما، آی‌نوا را در شبکه‌های اجتماعی دنبال کن.</p>
+          <ul class="contact-list">
+            <li><strong>پیج اینستاگرام</strong><span dir="ltr">@aynova_ai</span></li>
+            <li><strong>کانال بله</strong><span dir="ltr">@aynova_ai</span></li>
+            <li><strong>کانال ایتا</strong><span dir="ltr">@Aynova_ai</span></li>
+            <li><strong>کانال تلگرام</strong><span dir="ltr">@Aynova_ai</span></li>
+          </ul>
         </div>
-        <ol class="journey-steps">
-          <li><b>۱</b><span>یاد بگیر</span></li>
-          <li><b>۲</b><span>تمرین کن</span></li>
-          <li><b>۳</b><span>چالش را حل کن</span></li>
-          <li><b>۴</b><span>مرحلهٔ بعد را باز کن</span></li>
-        </ol>
+        <form class="question-form" id="question-form" novalidate>
+          <h3>سؤالت را برای ما بنویس</h3>
+          <label for="question-first-name">نام</label>
+          <input id="question-first-name" name="first-name" type="text" autocomplete="given-name" />
+          <label for="question-last-name">نام خانوادگی</label>
+          <input id="question-last-name" name="last-name" type="text" autocomplete="family-name" />
+          <label for="question-phone">شمارهٔ همراه</label>
+          <input id="question-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="۰۹۱۲۱۲۳۴۵۶۷" />
+          <label for="question-text">سؤال شما</label>
+          <textarea id="question-text" name="question" rows="4" placeholder="سؤالت را اینجا بنویس..."></textarea>
+          <p class="question-notice" id="question-notice" role="alert" tabindex="-1" hidden></p>
+          <button type="submit">ارسال سؤال</button>
+        </form>
       </section>
     </main>
 
