@@ -15,36 +15,34 @@ fields.lastName.value = localStorage.getItem('aynovaLastName') || '';
 fields.age.value = localStorage.getItem('aynovaAge') || '';
 fields.phone.value = localStorage.getItem('aynovaParentPhone') || '';
 
-const characters = {
-  girl: [
-    { id: 'girl-initial', label: 'کاراکتر دختر', source: 'initial' },
-    { id: 'girl-1', label: 'دختر ۱', image: 'assets/aynova-girl-characters.jpg', position: '0 0' },
-    { id: 'girl-2', label: 'دختر ۲', image: 'assets/aynova-girl-characters.jpg', position: '25% 0' },
-    { id: 'girl-3', label: 'دختر ۳', image: 'assets/aynova-girl-characters.jpg', position: '50% 0' },
-    { id: 'girl-4', label: 'دختر ۴', image: 'assets/aynova-girl-characters.jpg', position: '75% 0' },
-    { id: 'girl-5', label: 'دختر ۵', image: 'assets/aynova-girl-characters.jpg', position: '100% 0' },
-    { id: 'girl-6', label: 'دختر ۶', image: 'assets/aynova-girl-characters.jpg', position: '0 100%' },
-    { id: 'girl-7', label: 'دختر ۷', image: 'assets/aynova-girl-characters.jpg', position: '25% 100%' },
-    { id: 'girl-8', label: 'دختر ۸', image: 'assets/aynova-girl-characters.jpg', position: '50% 100%' }
-  ],
-  boy: [
-    { id: 'boy-initial', label: 'کاراکتر پسر', source: 'initial' },
-    { id: 'boy-1', label: 'پسر ۱', image: 'assets/aynova-boy-characters.jpg', position: '0 0' },
-    { id: 'boy-2', label: 'پسر ۲', image: 'assets/aynova-boy-characters.jpg', position: '25% 0' },
-    { id: 'boy-3', label: 'پسر ۳', image: 'assets/aynova-boy-characters.jpg', position: '50% 0' },
-    { id: 'boy-4', label: 'پسر ۴', image: 'assets/aynova-boy-characters.jpg', position: '75% 0' },
-    { id: 'boy-5', label: 'پسر ۵', image: 'assets/aynova-boy-characters.jpg', position: '100% 0' },
-    { id: 'boy-6', label: 'پسر ۶', image: 'assets/aynova-boy-characters.jpg', position: '0 100%' },
-    { id: 'boy-7', label: 'پسر ۷', image: 'assets/aynova-boy-characters.jpg', position: '25% 100%' },
-    { id: 'boy-8', label: 'پسر ۸', image: 'assets/aynova-boy-characters.jpg', position: '50% 100%' }
-  ]
+const collages = {
+  girl: 'assets/aynova-girl-characters.jpg',
+  boy: 'assets/aynova-boy-characters.jpg'
 };
+
+function collagePosition(index) {
+  const column = index % 4;
+  const row = Math.floor(index / 4);
+  return `${(column / 3) * 100}% ${(row / 1) * 100}%`;
+}
+
+function buildCharacters(gender) {
+  const labels = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸'];
+  const noun = gender === 'girl' ? 'دختر' : 'پسر';
+  return [
+    { id: `${gender}-initial`, label: `کاراکتر ${noun}`, source: 'initial' },
+    ...labels.map((label, index) => ({ id: `${gender}-${index + 1}`, label: `${noun} ${label}`, image: collages[gender], position: collagePosition(index) }))
+  ];
+}
+
+const characters = { girl: buildCharacters('girl'), boy: buildCharacters('boy') };
 
 const savedSelection = JSON.parse(localStorage.getItem('aynovaCharacterSelection') || '{}');
 
 function applySelection(selection) {
-  avatar.classList.toggle('girl', !selection || selection.gender === 'girl');
-  avatar.classList.toggle('boy', selection?.gender === 'boy');
+  const gender = selection?.gender || localStorage.getItem('aynovaCharacter') || 'girl';
+  avatar.classList.toggle('girl', gender === 'girl');
+  avatar.classList.toggle('boy', gender === 'boy');
   if (!selection || selection.source === 'initial') {
     avatar.style.backgroundImage = '';
     avatar.style.backgroundSize = '';
@@ -52,7 +50,7 @@ function applySelection(selection) {
     return;
   }
   avatar.style.backgroundImage = `url('${selection.image}')`;
-  avatar.style.backgroundSize = '500% 200%';
+  avatar.style.backgroundSize = '400% 200%';
   avatar.style.backgroundPosition = selection.position;
 }
 
@@ -67,7 +65,7 @@ function renderPicker(gender) {
     if (character.source === 'initial') {
       option.innerHTML = `<span class="picker-thumb ${gender}"></span><span>${character.label}</span>`;
     } else {
-      option.innerHTML = `<span class="picker-thumb" style="background-image:url('${character.image}');background-size:500% 200%;background-position:${character.position}"></span><span>${character.label}</span>`;
+      option.innerHTML = `<span class="picker-thumb" style="background-image:url('${character.image}');background-size:400% 200%;background-position:${character.position}"></span><span>${character.label}</span>`;
     }
     if (savedSelection.id === character.id) option.classList.add('selected');
     option.addEventListener('click', () => {
