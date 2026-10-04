@@ -44,9 +44,10 @@ function applySelection(selection) {
   avatar.classList.toggle('girl', gender === 'girl');
   avatar.classList.toggle('boy', gender === 'boy');
   if (!selection || selection.source === 'initial') {
-    avatar.style.backgroundImage = '';
-    avatar.style.backgroundSize = '';
-    avatar.style.backgroundPosition = '';
+    const onboardingImage = 'assets/aynova-characters.jpg';
+    avatar.style.backgroundImage = `url('${onboardingImage}')`;
+    avatar.style.backgroundSize = '200% 100%';
+    avatar.style.backgroundPosition = gender === 'boy' ? 'right center' : 'left center';
     return;
   }
   avatar.style.backgroundImage = `url('${selection.image}')`;
