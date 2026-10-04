@@ -40,14 +40,15 @@ const characters = { girl: buildCharacters('girl'), boy: buildCharacters('boy') 
 const savedSelection = JSON.parse(localStorage.getItem('aynovaCharacterSelection') || '{}');
 
 function applySelection(selection) {
-  const gender = selection?.gender || localStorage.getItem('aynovaCharacter') || 'girl';
+  const onboardingGender = localStorage.getItem('aynovaCharacter') || 'girl';
+  const isOnboardingPick = !selection || selection.source === 'initial';
+  const gender = isOnboardingPick ? onboardingGender : selection.gender;
   avatar.classList.toggle('girl', gender === 'girl');
   avatar.classList.toggle('boy', gender === 'boy');
-  if (!selection || selection.source === 'initial') {
-    const onboardingImage = 'assets/aynova-characters.jpg';
-    avatar.style.backgroundImage = `url('${onboardingImage}')`;
+  if (isOnboardingPick) {
+    avatar.style.backgroundImage = "url('assets/aynova-characters.jpg')";
     avatar.style.backgroundSize = '200% 100%';
-    avatar.style.backgroundPosition = gender === 'boy' ? 'right center' : 'left center';
+    avatar.style.backgroundPosition = onboardingGender === 'boy' ? 'right center' : 'left center';
     return;
   }
   avatar.style.backgroundImage = `url('${selection.image}')`;
