@@ -65,9 +65,11 @@ function renderPicker(gender) {
     option.dataset.id = character.id;
     option.dataset.gender = gender;
     if (character.source === 'initial') {
-      option.innerHTML = `<span class="picker-thumb ${gender}"></span><span>${character.label}</span>`;
+      option.innerHTML = `<span class="picker-thumb ${gender}"></span>`;
+      option.setAttribute('aria-label', character.label);
     } else {
-      option.innerHTML = `<span class="picker-thumb" style="background-image:url('${character.image}');background-size:400% 200%;background-position:${character.position}"></span><span>${character.label}</span>`;
+      option.innerHTML = `<span class="picker-thumb" style="background-image:url('${character.image}');background-size:400% 200%;background-position:${character.position}"></span>`;
+      option.setAttribute('aria-label', character.label);
     }
     if (savedSelection.id === character.id) option.classList.add('selected');
     option.addEventListener('click', () => {
