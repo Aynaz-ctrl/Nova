@@ -1,5 +1,11 @@
 const questionForm = document.querySelector('#question-form');
 const questionNotice = document.querySelector('#question-notice');
+const introButton = document.querySelector('#intro-button');
+const introNotice = document.querySelector('#intro-notice');
+
+introButton.addEventListener('click', () => {
+  introNotice.hidden = false;
+});
 
 function toEnglishDigits(value) {
   return value.replace(/[۰-۹]/g, (digit) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit));
