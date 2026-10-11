@@ -35,5 +35,7 @@ signupForm.addEventListener('submit', (event) => {
   localStorage.setItem('aynovaAge', age);
   localStorage.setItem('aynovaParentPhone', phoneDigits);
   localStorage.setItem('aynovaGender', gender.value);
+  localStorage.removeItem('aynovaFullAccess');
+  localStorage.removeItem('aynovaLessons');
   window.location.href = signupForm.action;
 });
