@@ -1,7 +1,7 @@
 const savedLessons = JSON.parse(localStorage.getItem('aynovaLessons') || '{}');
 const courseData = {
   2: ['ساخت جیمیل بخش ۱', 'ساخت جیمیل بخش ۲', 'ورود و ثبت نام در هوش مصنوعی'],
-  3: ['Prompt چیست؟', 'نوشتن Prompt بهتر', 'تمرین Prompt نویسی'],
+  3: ['Prompt چیست؟', 'اصول پرامت نویسی بخش ۱', 'اصول پرامت نویسی بخش ۲', 'تست پرامت'],
   4: ['ایده‌پردازی با AI', 'ساخت اولین پروژه', 'تبدیل ایده به محصول']
 };
 const modal = document.querySelector('#payment-modal');
