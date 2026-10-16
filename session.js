@@ -4,5 +4,5 @@ if (!sessionStorage.getItem('aynovaSessionStarted')) {
     if (key?.startsWith('aynova')) localStorage.removeItem(key);
   }
 
-  window.location.replace('signup.html?v=8');
+  window.location.replace('index.html?v=5');
 }
