@@ -1,0 +1,20 @@
+@media (max-width: 760px) {
+  html { -webkit-text-size-adjust: 100%; }
+  body { font-size: 14px; }
+
+  h1 { font-size: clamp(1.8rem, 8vw, 2.2rem) !important; line-height: 1.35 !important; }
+  h2 { line-height: 1.45; }
+  .title > span, .profile-title > span, .challenge-title > span, .quiz-title > span, .progress-title > span, .chat-title > span, .best-title > span { font-size: .84rem !important; line-height: 1.9; }
+  .title p, .profile-title p, .challenge-title p, .quiz-title p, .progress-title p, .chat-title p, .best-title p { font-size: .78rem !important; }
+
+  input, select, textarea, button { font-size: .9rem !important; }
+  .profile-card input, .profile-card select, .question-form input, .chat-form input, .payment-modal input { min-height: 48px; }
+  .profile-card, .question-form, .payment-modal, .challenge-view, .quiz-view, .chat-card, .continue-card, .summary-card, .learning-card { border-radius: 20px !important; }
+  .profile-card, .question-form, .payment-modal, .challenge-view, .quiz-view, .chat-card, .continue-card, .summary-card, .learning-card { padding: 18px !important; }
+
+  .lesson-row, .challenge-card, .quiz-card { font-size: .84rem !important; }
+  .lesson-row { min-height: 48px; }
+  .leaderboard { gap: 10px !important; }
+  .leader-card { min-height: 226px !important; }
+  .stats span { font-size: .56rem !important; }
+}

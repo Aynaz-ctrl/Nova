@@ -20,18 +20,34 @@ if (sidebar) {
     backdrop.classList.add('is-visible');
   }
 
+  function recordStart(clientX, clientY) {
+    touchStartX = clientX;
+    touchStartY = clientY;
+  }
+
+  function revealFromSwipe(clientX, clientY) {
+    const horizontalDistance = clientX - touchStartX;
+    const verticalDistance = Math.abs(clientY - touchStartY);
+
+    if (touchStartX >= window.innerWidth - 44 && horizontalDistance <= -55 && verticalDistance < 90) openMenu();
+  }
+
+  document.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'touch' && event.isPrimary) recordStart(event.clientX, event.clientY);
+  }, { passive: true });
+
+  document.addEventListener('pointerup', (event) => {
+    if (event.pointerType === 'touch' && event.isPrimary) revealFromSwipe(event.clientX, event.clientY);
+  }, { passive: true });
+
   document.addEventListener('touchstart', (event) => {
     const touch = event.touches[0];
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
+    recordStart(touch.clientX, touch.clientY);
   }, { passive: true });
 
   document.addEventListener('touchend', (event) => {
     const touch = event.changedTouches[0];
-    const horizontalDistance = touch.clientX - touchStartX;
-    const verticalDistance = Math.abs(touch.clientY - touchStartY);
-
-    if (touchStartX >= window.innerWidth - 32 && horizontalDistance <= -70 && verticalDistance < 90) openMenu();
+    revealFromSwipe(touch.clientX, touch.clientY);
   }, { passive: true });
 
   sidebar.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
