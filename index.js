@@ -1,3 +1,10 @@
+for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+  const key = localStorage.key(index);
+  if (key?.startsWith('aynova')) localStorage.removeItem(key);
+}
+
+window.location.replace('signup.html?v=7');
+
 const questionForm = document.querySelector('#question-form');
 const questionNotice = document.querySelector('#question-notice');
 const introButton = document.querySelector('#intro-button');
