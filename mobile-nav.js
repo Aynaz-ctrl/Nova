@@ -31,7 +31,7 @@ if (sidebar) {
     const horizontalDistance = touch.clientX - touchStartX;
     const verticalDistance = Math.abs(touch.clientY - touchStartY);
 
-    if (touchStartX <= 32 && horizontalDistance >= 70 && verticalDistance < 90) openMenu();
+    if (touchStartX >= window.innerWidth - 32 && horizontalDistance <= -70 && verticalDistance < 90) openMenu();
   }, { passive: true });
 
   sidebar.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));

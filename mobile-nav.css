@@ -3,16 +3,16 @@
 
   .sidebar {
     position: fixed !important;
-    inset: 0 auto 0 0 !important;
+    inset: 0 0 0 auto !important;
     z-index: 40;
     width: min(78vw, 300px) !important;
     height: 100vh !important;
     padding: 28px 18px !important;
     border: 0 !important;
-    border-right: 1px solid #e1edf2 !important;
-    border-left: 0 !important;
-    box-shadow: 12px 0 30px rgb(15 30 63 / 14%) !important;
-    transform: translateX(-105%);
+    border-left: 1px solid #e1edf2 !important;
+    border-right: 0 !important;
+    box-shadow: -12px 0 30px rgb(15 30 63 / 14%) !important;
+    transform: translateX(105%);
     transition: transform .24s ease;
     overflow-y: auto;
   }
