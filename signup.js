@@ -37,5 +37,6 @@ signupForm.addEventListener('submit', (event) => {
   localStorage.setItem('aynovaGender', gender.value);
   localStorage.removeItem('aynovaFullAccess');
   localStorage.removeItem('aynovaLessons');
+  sessionStorage.setItem('aynovaSessionStarted', 'true');
   window.location.href = signupForm.action;
 });
